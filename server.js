@@ -1,7 +1,15 @@
 const knex = require('knex')
 const app = require('./app')
-
+const http = require('http').createServer(app)
+const io = require('socket.io')(http, { origins: 'http://localhost:3000' })
 const { PORT, DATABASE_URL } = require('./config')
+const { isPrimitive } = require('util')
+
+io.on('connection', socket => {
+    socket.on('message', ({ roomId, message }) => {
+        io.emit('message', { roomId, message })
+    })
+})
 
 const db = knex({
     client: 'pg',
@@ -10,6 +18,6 @@ const db = knex({
 app.set('db', db)
 
 
-app.listen(PORT, () => {
+http.listen(PORT, () => {
     console.log(`Server listening at http://localhost:${PORT}`)
 })
