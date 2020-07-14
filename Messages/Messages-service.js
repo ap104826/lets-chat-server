@@ -1,17 +1,17 @@
 const MessagesService = {
-    // getAll(knex) {
-    //     return knex.select('*').from('rooms')
-    // },
+    getAll(knex) {
+        return knex.select('*').from('messages')
+    },
 
-    // insert(knex, newRoom) {
-    //     return knex
-    //         .insert(newRoom)
-    //         .into('rooms')
-    //         .returning('*')
-    //         .then(rows => {
-    //             return rows[0]
-    //         })
-    // },
+    insert(knex, newMessage) {
+        return knex
+            .insert(newMessage)
+            .into('messages')
+            .returning('*')
+            .then(rows => {
+                return rows[0]
+            })
+    },
 
     // getById(knex, id) {
     //     return knex
