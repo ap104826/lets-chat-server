@@ -12,6 +12,13 @@ const RoomsService = {
                 return rows[0]
             })
     },
+    //get messages for that room
+    getmessagesbyroomId(knex, id) {
+        return knex
+            .from('messages')
+            .select('*')
+            .where('rooms_id', id)
+    },
 
     getById(knex, id) {
         return knex

@@ -6,12 +6,30 @@ const MessagesService = require('../messages/messages-service')
 const roomsRouter = express.Router()
 const jsonParser = express.json()
 
+
 const serializeRoom = room => ({
     id: room.id,
     name: xss(room.name),
     modified: room.modified
 })
+const serializeMessage = message => ({
+    id: message.id,
+    name: xss(message.name),
+    user_name: xss(message.user_name),
+    modified: message.modified,
+    message: xss(message.message)
+})
 
+roomsRouter
+    .route('/:id/messages')
+    .get((req, res, next) => {
+        const knexInstance = req.app.get('db')
+        RoomsService.getmessagesbyroomId(knexInstance, req.params.id)
+            .then(messages => {
+                res.json(messages.map(serializeMessage))
+            })
+            .catch(next)
+    })
 roomsRouter
     .route('/')
     .get((req, res, next) => {
