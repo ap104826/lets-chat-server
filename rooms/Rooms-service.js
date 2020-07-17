@@ -48,6 +48,12 @@ const RoomsService = {
         return knex('usersperroom')
             .where({ user_id: userId, room_id: roomId })
             .delete()
+    },
+    getUsersPerRoom(knex, roomId) {
+        return knex
+            .from('usersperroom')
+            .select('*')
+            .where({ room_id: roomId })
     }
 }
 
