@@ -39,6 +39,16 @@ const RoomsService = {
             .where({ id })
             .update(newRoomFields)
     },
+    joinRoom(knex, roomId, userId) {
+        return knex
+            .insert({ user_id: userId, room_id: roomId })
+            .into('usersperroom')
+    },
+    leaveRoom(knex, roomId, userId) {
+        return knex('usersperroom')
+            .where({ user_id: userId, room_id: roomId })
+            .delete()
+    }
 }
 
 module.exports = RoomsService

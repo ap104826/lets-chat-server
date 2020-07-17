@@ -11,8 +11,18 @@ const db = knex({
 })
 app.set('db', db)
 
+
+
 io.on('connection', socket => {
     console.log('connection')
+
+    socket.on('userJoined', ({ roomId, email }) => {
+        console.log(roomId, email)
+    })
+
+    socket.on('userLeft', ({ roomId, email }) => {
+        console.log(roomId, email)
+    })
 
     socket.on('message', (data) => {
         console.log('message', JSON.stringify(data))
