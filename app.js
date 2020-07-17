@@ -14,10 +14,11 @@ const app = express()
 app.use(morgan())
 app.use(helmet())
 app.use(cors())
+
 app.use('/api/rooms', roomsRouter)
 app.use('/api/users', usersRouter)
-// app.use('/api/bookmarks', bookmarksRouter)
 
+// app.use('/api/bookmarks', bookmarksRouter)
 
 app.use((error, req, res, next) => {
     let response

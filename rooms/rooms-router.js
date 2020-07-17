@@ -3,6 +3,7 @@ const express = require('express')
 const xss = require('xss')
 const RoomsService = require('./Rooms-service')
 const MessagesService = require('../messages/messages-service')
+const { requireAuth } = require('../users/jwt-auth')
 const roomsRouter = express.Router()
 const jsonParser = express.json()
 
@@ -22,7 +23,7 @@ const serializeMessage = message => ({
 
 roomsRouter
     .route('/:id/messages')
-    .get((req, res, next) => {
+    .get(requireAuth, (req, res, next) => {
         const knexInstance = req.app.get('db')
         RoomsService.getmessagesbyroomId(knexInstance, req.params.id)
             .then(messages => {
@@ -32,7 +33,7 @@ roomsRouter
     })
 roomsRouter
     .route('/')
-    .get((req, res, next) => {
+    .get(requireAuth, (req, res, next) => {
         const knexInstance = req.app.get('db')
         RoomsService.getAll(knexInstance)
             .then(rooms => {
@@ -40,7 +41,7 @@ roomsRouter
             })
             .catch(next)
     })
-    .post(jsonParser, (req, res, next) => {
+    .post(requireAuth, jsonParser, (req, res, next) => {
         // for (const [key, value] of Object.entries(newRoom)) {
         //     if (value == null) {
         //         return res.status(400).json({
@@ -66,7 +67,7 @@ roomsRouter
 
 roomsRouter
     .route('/:id')
-    .all((req, res, next) => {
+    .all(requireAuth, (req, res, next) => {
         RoomsService.getById(
             req.app.get('db'),
             req.params.id
@@ -82,10 +83,10 @@ roomsRouter
             })
             .catch(next)
     })
-    .get((req, res, next) => {
+    .get(requireAuth, (req, res, next) => {
         res.json(serializeRoom(res.room))
     })
-    .delete((req, res, next) => {
+    .delete(requireAuth, (req, res, next) => {
         MessagesService.deleteMessagesForRoom(
             req.app.get('db'),
             req.params.id
@@ -105,7 +106,7 @@ roomsRouter
 
 roomsRouter
     .route('/:id/users')
-    .get((req, res, next) => {
+    .get(requireAuth, (req, res, next) => {
         RoomsService.getUsersPerRoom(
             req.app.get('db'),
             req.params.id

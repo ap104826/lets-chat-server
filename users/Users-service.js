@@ -13,12 +13,11 @@ const UsersService = {
             })
     },
 
-    getByUserNameAndPassword(knex, userName, password) {
+    getByUserName(knex, userName, password) {
         return knex
             .from('users')
             .select('*')
             .where('user_name', userName)
-            .where('password', password)
             .first()
     },
 

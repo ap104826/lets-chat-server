@@ -1,9 +1,12 @@
 const path = require('path')
 const express = require('express')
 const xss = require('xss')
+const AuthService = require('./Auth-service')
 const UsersService = require('./Users-service')
 const usersRouter = express.Router()
 const jsonParser = express.json()
+const bcrypt = require('bcryptjs')
+
 
 const serializeUser = user => ({
     id: user.id,
@@ -25,30 +28,36 @@ usersRouter
     .post(jsonParser, (req, res, next) => {
 
         const { userName, password } = req.body
-        const newUser = {
-            user_name: userName,
-            password
-        }
 
-        for (const [key, value] of Object.entries(newUser)) {
-            if (!value) {
-                return res.status(400).json({
-                    error: { message: `Missing '${key}' in request body` }
-                })
-            }
-        }
+        bcrypt.hash(password, 10)
+            .then(hash => {
+                const newUser = {
+                    user_name: userName,
+                    password: hash
+                }
 
-        UsersService.insert(
-            req.app.get('db'),
-            newUser
-        )
-            .then(user => {
-                res
-                    .status(201)
-                    .location(path.posix.join(req.originalUrl, `/${user.id}`))
-                    .json(serializeUser(user))
+                for (const [key, value] of Object.entries(newUser)) {
+                    if (!value) {
+                        return res.status(400).json({
+                            error: { message: `Missing '${key}' in request body` }
+                        })
+                    }
+                }
+
+                UsersService.insert(
+                    req.app.get('db'),
+                    newUser
+                )
+                    .then(user => {
+                        res
+                            .status(201)
+                            .location(path.posix.join(req.originalUrl, `/${user.id}`))
+                            .json(serializeUser(user))
+                    })
+                    .catch(next)
             })
-            .catch(next)
+
+
     })
 
 usersRouter
@@ -56,21 +65,33 @@ usersRouter
     .post(jsonParser, (req, res, next) => {
         const { userName, password } = req.body
 
-        UsersService.getByUserNameAndPassword(
+        UsersService.getByUserName(
             req.app.get('db'),
-            userName,
-            password
+            userName
         )
             .then(user => {
                 if (!user) {
-                    return res.status(404).json({
+                    return res.status(400).json({
                         error: { message: `user doesn't exist` }
                     })
                 }
 
-                res.json(user)
+                bcrypt.compare(password, user.password)
+                    .then((passwordsMatch) => {
+                        if (!passwordsMatch) {
+                            return res.status(400).json({ error: 'Incorrect user_name or password' })
+                        }
 
-                next()
+                        const sub = user.user_name
+                        const payload = { user_id: user.id }
+
+                        res.json({
+                            authToken: AuthService.createJwt(sub, payload),
+                        })
+                        next()
+                    })
+
+
             })
             .catch(next)
     })

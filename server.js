@@ -18,11 +18,17 @@ io.on('connection', socket => {
     socket.on('userJoined', ({ roomId, userId }) => {
         RoomsService.joinRoom(db, roomId, userId)
             .catch((reason) => console.log(reason))
+
+
+        io.sockets.emit('userJoined', { id: userId, user_name: 'nmehta6@gmail.com', roomId })
     })
 
     socket.on('userLeft', ({ roomId, userId }) => {
         RoomsService.leaveRoom(db, roomId, userId)
             .catch((reason) => console.log(reason))
+
+        io.sockets.emit('userLeft', { id: userId, user_name: 'nmehta6@gmail.com', roomId })
+
     })
 
     socket.on('message', (data) => {
