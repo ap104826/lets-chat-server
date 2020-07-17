@@ -103,25 +103,25 @@ roomsRouter
             .catch(next)
     })
 
-roomsRouter
-    .route('/:id/users/:userId')
-    .post((req, res, next) => {
-        RoomsService.joinRoom(
-            req.app.get('db'),
-            req.params.id,
-            req.params.userId
-        )
-            .then(() => res.status(200).send())
-            .catch(next)
-    })
-    .delete((req, res, next) => {
-        RoomsService.leaveRoom(
-            req.app.get('db'),
-            req.params.id,
-            req.params.userId
-        )
-            .then(() => res.status(200).send())
-            .catch(next)
-    })
+// roomsRouter
+//     .route('/:id/users/:userId')
+//     .post((req, res, next) => {
+//         RoomsService.joinRoom(
+//             req.app.get('db'),
+//             req.params.id,
+//             req.params.userId
+//         )
+//             .then(() => res.status(200).send())
+//             .catch(next)
+//     })
+//     .delete((req, res, next) => {
+//         RoomsService.leaveRoom(
+//             req.app.get('db'),
+//             req.params.id,
+//             req.params.userId
+//         )
+//             .then(() => res.status(200).send())
+//             .catch(next)
+//     })
 
 module.exports = roomsRouter

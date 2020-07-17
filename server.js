@@ -5,6 +5,7 @@ const io = require('socket.io')(http)
 const { PORT, DATABASE_URL } = require('./config')
 const { isPrimitive } = require('util')
 const MessagesService = require('./messages/messages-service')
+const RoomsService = require('./rooms/Rooms-service')
 const db = knex({
     client: 'pg',
     connection: DATABASE_URL,
@@ -14,14 +15,14 @@ app.set('db', db)
 
 
 io.on('connection', socket => {
-    console.log('connection')
-
-    socket.on('userJoined', ({ roomId, email }) => {
-        console.log(roomId, email)
+    socket.on('userJoined', ({ roomId, userId }) => {
+        RoomsService.joinRoom(db, roomId, userId)
+            .catch((reason) => console.log(reason))
     })
 
-    socket.on('userLeft', ({ roomId, email }) => {
-        console.log(roomId, email)
+    socket.on('userLeft', ({ roomId, userId }) => {
+        RoomsService.leaveRoom(db, roomId, userId)
+            .catch((reason) => console.log(reason))
     })
 
     socket.on('message', (data) => {
