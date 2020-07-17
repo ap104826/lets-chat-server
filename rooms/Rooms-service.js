@@ -52,7 +52,8 @@ const RoomsService = {
     getUsersPerRoom(knex, roomId) {
         return knex
             .from('usersperroom')
-            .select('*')
+            .join('users', 'users.id', '=', 'usersperroom.user_id')
+            .select('users.id', 'users.user_name')
             .where({ room_id: roomId })
     }
 }
