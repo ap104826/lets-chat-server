@@ -8,23 +8,8 @@ const jsonParser = express.json()
 const bcrypt = require('bcryptjs')
 
 
-const serializeUser = user => ({
-    id: user.id,
-    userName: xss(user.user_name),
-    password: xss(user.password)
-})
-
 usersRouter
     .route('/')
-    // .get((req, res, next) => {
-    //     const knexInstance = req.app.get('db')
-    //     UsersService.getAll(knexInstance)
-    //         .then(rooms => {
-    //             res.json(rooms.map(serializeRoom))
-    //         })
-    //         .catch(next)
-    // })
-    //read username and password from request and send it back in response. 
     .post(jsonParser, (req, res, next) => {
 
         const { userName, password } = req.body
@@ -101,42 +86,5 @@ usersRouter
             })
             .catch(next)
     })
-//
-// .all((req, res, next) => {
-//     UsersService.getById(
-//         req.app.get('db'),
-//         req.params.id
-//     )
-//         .then(room => {
-//             if (!room) {
-//                 return res.status(404).json({
-//                     error: { message: `Room doesn't exist` }
-//                 })
-//             }
-//             res.room = room
-//             next()
-//         })
-//         .catch(next)
-// })
-// .get((req, res, next) => {
-//     res.json(serializeUser(res.room))
-// })
-// .delete((req, res, next) => {
-//     MessagesService.deleteMessagesForRoom(
-//         req.app.get('db'),
-//         req.params.id
-//     )
-//         .then(() => {
-//             UsersService.deleteRoom(
-//                 req.app.get('db'),
-//                 req.params.id
-//             )
-//                 .then(numRowsAffected => {
-//                     res.status(204).end()
-//                 })
-//                 .catch(next)
-//         })
-//         .catch(next)
-// })
 
 module.exports = usersRouter

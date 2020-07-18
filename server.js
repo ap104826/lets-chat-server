@@ -3,7 +3,6 @@ const app = require('./app')
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 const { PORT, DATABASE_URL } = require('./config')
-const { isPrimitive } = require('util')
 const MessagesService = require('./messages/messages-service')
 const RoomsService = require('./rooms/Rooms-service')
 const UsersService = require('./users/Users-service')
@@ -65,8 +64,6 @@ io.on('connection', socket => {
         })
     })
 })
-
-
 
 
 http.listen(PORT, () => {

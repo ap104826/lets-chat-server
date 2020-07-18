@@ -26,13 +26,7 @@ const UsersService = {
             .select('*')
             .where('user_name', userName)
             .first()
-    },
-
-    deleteRoom(knex, id) {
-        return knex('users')
-            .where({ id })
-            .delete()
-    },
+    }
 }
 
 module.exports = UsersService

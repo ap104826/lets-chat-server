@@ -41,13 +41,6 @@ roomsRouter
             .catch(next)
     })
     .post(requireAuth, jsonParser, (req, res, next) => {
-        // for (const [key, value] of Object.entries(newRoom)) {
-        //     if (value == null) {
-        //         return res.status(400).json({
-        //             error: { message: `Missing '${key}' in request body` }
-        //         })
-        //     }
-        // }
         const { name } = req.body
         const newRoom = { name }
 
