@@ -11,6 +11,11 @@ const MessagesService = {
             .then(rows => {
                 return rows[0]
             })
+    },
+    deleteMessagesForRoom(knex, id) {
+        return knex('messages')
+            .where({ rooms_id: id })
+            .delete()
     }
 }
 
