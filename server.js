@@ -6,6 +6,8 @@ const { PORT, DATABASE_URL } = require('./config')
 const { isPrimitive } = require('util')
 const MessagesService = require('./messages/messages-service')
 const RoomsService = require('./rooms/Rooms-service')
+const UsersService = require('./users/Users-service')
+const AuthService = require('./users/Auth-service')
 const db = knex({
     client: 'pg',
     connection: DATABASE_URL,
@@ -15,19 +17,25 @@ app.set('db', db)
 
 
 io.on('connection', socket => {
-    socket.on('userJoined', ({ roomId, userId }) => {
+    socket.on('userJoined', ({ roomId, authToken }) => {
+        const payload = AuthService.verifyJwt(authToken)
+        const userId = payload.user_id
+        const userName = payload.sub
+
         RoomsService.joinRoom(db, roomId, userId)
+            .then(() => {
+                io.sockets.emit('userJoined', { id: userId, user_name: userName, roomId })
+            })
             .catch((reason) => console.log(reason))
 
 
-        io.sockets.emit('userJoined', { id: userId, user_name: 'nmehta6@gmail.com', roomId })
     })
 
     socket.on('userLeft', ({ roomId, userId }) => {
         RoomsService.leaveRoom(db, roomId, userId)
             .catch((reason) => console.log(reason))
 
-        io.sockets.emit('userLeft', { id: userId, user_name: 'nmehta6@gmail.com', roomId })
+        io.sockets.emit('userLeft', { id: userId, roomId })
 
     })
 

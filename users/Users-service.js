@@ -12,8 +12,15 @@ const UsersService = {
                 return rows[0]
             })
     },
+    getById(knex, id) {
+        return knex
+            .from('users')
+            .select('*')
+            .where('id', id)
+            .first()
+    },
 
-    getByUserName(knex, userName, password) {
+    getByUserName(knex, userName) {
         return knex
             .from('users')
             .select('*')
