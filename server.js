@@ -42,18 +42,27 @@ io.on('connection', socket => {
             .catch((reason) => console.log(reason))
     })
 
-    socket.on('message', (data) => {
-        console.log('message', JSON.stringify(data))
+    socket.on('message', ({ message, authToken }) => {
+
+        const payload = AuthService.verifyJwt(authToken)
+        const userId = parseInt(payload.user_id)
+
         const newMessage = {
-            message: data.message,
-            user_name: data.user,
-            rooms_id: data.room_id
+            message: message.message,
+            rooms_id: message.room_id,
+            user_id: userId
         }
-        io.sockets.emit('message', data)
         MessagesService.insert(
             db,
             newMessage
-        )
+        ).then((createdMessage) => {
+            //get the message with the user_name
+            UsersService.getById(db, userId)
+                .then(storedUser => {
+                    createdMessage.user_name = storedUser.user_name
+                    io.sockets.emit('message', createdMessage)
+                })
+        })
     })
 })
 

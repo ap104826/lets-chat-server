@@ -15,7 +15,6 @@ const serializeRoom = room => ({
 })
 const serializeMessage = message => ({
     id: message.id,
-    name: xss(message.name),
     user_name: xss(message.user_name),
     modified: message.modified,
     message: xss(message.message)

@@ -16,8 +16,10 @@ const RoomsService = {
     getmessagesbyroomId(knex, id) {
         return knex
             .from('messages')
-            .select('*')
+            .join('users', 'users.id', '=', 'messages.user_id')
+            .select('messages.*', 'users.user_name')
             .where('rooms_id', id)
+            .orderBy('modified')
     },
 
     getById(knex, id) {
