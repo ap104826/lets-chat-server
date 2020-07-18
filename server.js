@@ -23,20 +23,23 @@ io.on('connection', socket => {
         const userName = payload.sub
 
         RoomsService.joinRoom(db, roomId, userId)
-            .then(() => {
+            .catch((reason) => {
+                console.log(reason)
+            })
+            .finally(() => {
                 io.sockets.emit('userJoined', { id: userId, user_name: userName, roomId })
             })
-            .catch((reason) => console.log(reason))
 
 
     })
 
-    socket.on('userLeft', ({ roomId, userId }) => {
-        RoomsService.leaveRoom(db, roomId, userId)
-            .catch((reason) => console.log(reason))
-
+    socket.on('userLeft', ({ roomId, authToken }) => {
+        const payload = AuthService.verifyJwt(authToken)
+        const userId = payload.user_id
         io.sockets.emit('userLeft', { id: userId, roomId })
 
+        RoomsService.leaveRoom(db, roomId, userId)
+            .catch((reason) => console.log(reason))
     })
 
     socket.on('message', (data) => {
