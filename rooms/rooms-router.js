@@ -51,7 +51,7 @@ roomsRouter
             .then(room => {
                 res
                     .status(201)
-                    .location(path.posix.join(req.originalUrl, `/${room.name}`))
+                    .location(path.posix.join(req.originalUrl, `/${room.id}`))
                     .json(serializeRoom(room))
             })
             .catch(next)

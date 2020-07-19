@@ -6,10 +6,27 @@ const UsersService = require('./Users-service')
 const usersRouter = express.Router()
 const jsonParser = express.json()
 const bcrypt = require('bcryptjs')
+const { requireAuth } = require('../users/jwt-auth')
 
 
 usersRouter
     .route('/')
+    .delete(requireAuth, (req, res, next) => {
+
+        const { userName } = req.query
+        UsersService.delete(
+            req.app.get('db'),
+            userName
+        )
+            .then(() => {
+
+                res
+                    .status(200)
+                    .send()
+            })
+            .catch(next)
+
+    })
     .post(jsonParser, (req, res, next) => {
 
         const { userName, password } = req.body

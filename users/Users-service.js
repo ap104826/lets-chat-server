@@ -26,6 +26,13 @@ const UsersService = {
             .select('*')
             .where('user_name', userName)
             .first()
+    },
+
+    delete(knex, userName) {
+        return knex
+            .from('users')
+            .where('user_name', userName)
+            .delete()
     }
 }
 
