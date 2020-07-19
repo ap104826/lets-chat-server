@@ -1,7 +1,5 @@
 const knex = require('knex')
 const app = require('./app')
-const http = require('http').createServer(app)
-const io = require('socket.io')(http, { origins: '*:*' })
 const { PORT, DATABASE_URL } = require('./config')
 const MessagesService = require('./messages/messages-service')
 const RoomsService = require('./rooms/Rooms-service')
@@ -13,7 +11,11 @@ const db = knex({
 })
 app.set('db', db)
 
+const server = app.listen(PORT, () => {
+    console.log(`Server listening at http://localhost:${PORT}`)
+})
 
+const io = require('socket.io')(server, { origins: '*:*' })
 
 io.on('connection', socket => {
     socket.on('userJoined', ({ roomId, authToken }) => {
@@ -65,7 +67,3 @@ io.on('connection', socket => {
     })
 })
 
-
-http.listen(PORT, () => {
-    console.log(`Server listening at http://localhost:${PORT}`)
-})
