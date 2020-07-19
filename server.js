@@ -1,7 +1,7 @@
 const knex = require('knex')
 const app = require('./app')
 const { PORT, DATABASE_URL } = require('./config')
-const MessagesService = require('./messages/Messages-service')
+const MessagesService = require('./Messages/Messages-service')
 const RoomsService = require('./rooms/Rooms-service')
 const UsersService = require('./users/Users-service')
 const AuthService = require('./users/Auth-service')
