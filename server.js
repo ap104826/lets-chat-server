@@ -1,7 +1,7 @@
 const knex = require('knex')
 const app = require('./app')
 const http = require('http').createServer(app)
-const io = require('socket.io')(http)
+const io = require('socket.io')(http, { origins: '*:*' })
 const { PORT, DATABASE_URL } = require('./config')
 const MessagesService = require('./messages/messages-service')
 const RoomsService = require('./rooms/Rooms-service')
